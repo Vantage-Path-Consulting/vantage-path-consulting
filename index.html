@@ -510,6 +510,12 @@
         font-weight:900;
       }
     }
+    @media (max-width: 540px){
+      .footer-grid{grid-template-columns:1fr}
+      .contact-row{flex-wrap:wrap}
+      h1{font-size:30px}
+      .hero-inner{padding:28px 16px}
+    }
   </style>
 </head>
 
@@ -552,9 +558,8 @@
           <div>
             <p class="kicker">Fractional HR Consulting & Recruiting Support</p>
             <h1>Scalable People Operations<br/>for Growing Organizations</h1>
-            <p>
-              Practical HR and talent support for nonprofits and growing businesses —
-              designed to meet immediate needs while building sustainable foundations.
+            <p style="font-size:0.95rem;">
+              Tailored HR solutions for nonprofits and SMBs.
             </p>
 
             <div class="hero-actions">
@@ -789,20 +794,24 @@
 
         <div class="contact" aria-label="Contact card">
           <div class="footer-title">Contact</div>
-          <div class="contact-row">
-            <div class="mail-ic" aria-hidden="true">✉</div>
+          <a class="contact-row" href="mailto:lucian@vantagepathconsulting.com" style="text-decoration:none;">
+            <div class="mail-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+            </div>
             <div>
               <div style="font-size:12px;color:rgba(15,23,42,.60);font-weight:700">Email</div>
               <div style="font-size:14px">lucian@vantagepathconsulting.com</div>
             </div>
-          </div>
-          <div class="contact-row" style="margin-top:10px">
-            <div class="mail-ic" aria-hidden="true">📍</div>
+          </a>
+          <a class="contact-row" href="https://www.google.com/maps/search/?api=1&query=1100+Dexter+Ave+N+Seattle+WA+98109" target="_blank" rel="noopener" style="margin-top:10px;text-decoration:none;">
+            <div class="mail-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            </div>
             <div>
               <div style="font-size:12px;color:rgba(15,23,42,.60);font-weight:700">Address</div>
-              <div style="font-size:14px">1100 Dexter Ave. N, Suite 100</div>
+              <div style="font-size:14px">1100 Dexter Ave. N</div>
             </div>
-          </div>
+          </a>
           <div class="small" style="margin-top:10px">
             Response time: typically within 1–2 business days.
           </div>

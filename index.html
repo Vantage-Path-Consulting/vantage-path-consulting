@@ -1039,7 +1039,9 @@
         case "auth/unauthorized-domain": return "This domain isn't authorized for sign-in yet.";
         case "auth/email-already-in-use": return "An account already exists for that email — try signing in instead.";
         case "auth/weak-password": return "Password should be at least 6 characters.";
-        default: return "Sign-in failed. Please try again.";
+        case "auth/operation-not-allowed": return "Sign-in isn't enabled yet. Please contact us to set up your account.";
+        case "auth/network-request-failed": return "Network error — please check your connection and try again.";
+        default: return code ? "Sign-in failed (" + code + "). Please try again." : "Sign-in failed. Please try again.";
       }
     }
 

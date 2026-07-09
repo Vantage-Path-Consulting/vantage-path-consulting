@@ -599,26 +599,13 @@
     }
     .portal-msg.error{color:#FFB4B4}
     .portal-msg.ok{color:#9CF3D9}
-    .portal-divider{
-      display:flex; align-items:center; gap:10px;
-      margin:16px 0;
-      color:rgba(255,255,255,.5); font-size:11.5px;
-      text-transform:uppercase; letter-spacing:.5px;
+    .btn-secondary{
+      width:100%; margin-top:10px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;
     }
-    .portal-divider:before,.portal-divider:after{
-      content:""; height:1px; flex:1; background:rgba(255,255,255,.14);
-    }
-    .btn-google{
-      width:100%;
-      background:#fff; color:#1F2937;
-      border:1px solid rgba(255,255,255,.2);
-    }
-    .btn-google:hover{background:#F2F4F7}
-    .portal-foot{
-      margin:16px 0 0; text-align:center;
-      font-size:12px; color:rgba(255,255,255,.7);
-    }
-    .portal-foot a{color:var(--teal-2); font-weight:700}
+    .btn-secondary:hover{background:rgba(255,255,255,.14)}
   </style>
 </head>
 
@@ -947,16 +934,10 @@
         <input type="password" id="clientPassword" name="password" placeholder="••••••••" autocomplete="current-password" required />
 
         <button class="btn btn-primary" type="submit" id="loginBtn">Sign In</button>
+        <button class="btn btn-secondary" type="button" id="signupBtn">Create an Account</button>
       </form>
 
       <p class="portal-msg" id="portalMsg" role="status"></p>
-
-      <div class="portal-divider">or</div>
-      <button class="btn btn-google" type="button" id="googleBtn">Continue with Google</button>
-
-      <p class="portal-foot">
-        Need access? <a href="mailto:lucian@vantagepathconsulting.com?subject=Client%20Portal%20Access%20Request">Request an account</a>
-      </p>
     </div>
   </div>
 
@@ -1013,8 +994,7 @@
     import {
       getAuth,
       signInWithEmailAndPassword,
-      GoogleAuthProvider,
-      signInWithPopup,
+      createUserWithEmailAndPassword,
       onAuthStateChanged,
     } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
@@ -1039,7 +1019,7 @@
     }
 
     const form = document.getElementById("loginForm");
-    const googleBtn = document.getElementById("googleBtn");
+    const signupBtn = document.getElementById("signupBtn");
     const loginBtn = document.getElementById("loginBtn");
     const msg = document.getElementById("portalMsg");
 
@@ -1056,8 +1036,9 @@
         case "auth/wrong-password":
         case "auth/invalid-credential": return "Incorrect email or password.";
         case "auth/too-many-requests": return "Too many attempts. Please try again later.";
-        case "auth/popup-closed-by-user": return "Sign-in was cancelled.";
         case "auth/unauthorized-domain": return "This domain isn't authorized for sign-in yet.";
+        case "auth/email-already-in-use": return "An account already exists for that email — try signing in instead.";
+        case "auth/weak-password": return "Password should be at least 6 characters.";
         default: return "Sign-in failed. Please try again.";
       }
     }
@@ -1081,12 +1062,21 @@
       }
     });
 
-    googleBtn.addEventListener("click", async () => {
-      setMsg("Opening Google sign-in…", "");
+    signupBtn.addEventListener("click", async () => {
+      const email = document.getElementById("clientEmail").value.trim();
+      const password = document.getElementById("clientPassword").value;
+      if (!email || !password) {
+        setMsg("Please enter an email and password to create an account.", "error");
+        return;
+      }
+      signupBtn.disabled = true;
+      setMsg("Creating your account…", "");
       try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
+        await createUserWithEmailAndPassword(auth, email, password);
       } catch (err) {
         setMsg(friendlyError(err.code), "error");
+      } finally {
+        signupBtn.disabled = false;
       }
     });
 

@@ -516,6 +516,109 @@
       h1{font-size:30px}
       .hero-inner{padding:28px 16px}
     }
+
+    /* Client Portal modal */
+    .modal-overlay{
+      position:fixed; inset:0; z-index:100;
+      display:none;
+      align-items:center; justify-content:center;
+      padding:20px;
+      background:rgba(4,10,20,.62);
+      backdrop-filter:saturate(140%) blur(6px);
+    }
+    .modal-overlay.open{display:flex}
+    .modal{
+      width:100%; max-width:440px;
+      background:
+        radial-gradient(700px 320px at 20% 0%, rgba(31,167,163,.16), transparent 60%),
+        linear-gradient(160deg,var(--navy),var(--navy-2));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius-lg);
+      box-shadow:0 30px 70px rgba(2,8,23,.55);
+      color:#fff;
+      padding:26px 24px 22px;
+      position:relative;
+      max-height:calc(100vh - 40px);
+      overflow-y:auto;
+    }
+    .modal-close{
+      position:absolute; top:14px; right:14px;
+      width:34px; height:34px; border-radius:12px;
+      display:grid; place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      color:#fff; font-size:18px; line-height:1;
+      cursor:pointer;
+    }
+    .modal-close:hover{background:rgba(255,255,255,.16)}
+    .portal-head{display:flex; align-items:center; gap:12px; margin-bottom:16px}
+    .portal-head img{width:40px;height:40px;border-radius:12px;object-fit:contain;background:#02091A}
+    .portal-head h3{margin:0;font-size:19px;letter-spacing:.2px}
+    .portal-head p{margin:2px 0 0;font-size:12.5px;color:rgba(255,255,255,.72);line-height:1.4}
+    .coming-soon{
+      display:flex; align-items:flex-start; gap:10px;
+      background:rgba(31,167,163,.14);
+      border:1px solid rgba(31,167,163,.32);
+      border-radius:14px;
+      padding:12px 12px;
+      margin-bottom:18px;
+      font-size:12.5px; line-height:1.5;
+      color:rgba(255,255,255,.9);
+    }
+    .cs-badge{
+      flex:0 0 auto;
+      background:linear-gradient(135deg,var(--teal),var(--teal-2));
+      color:#04121A; font-weight:800; font-size:10.5px;
+      letter-spacing:.4px; text-transform:uppercase;
+      padding:5px 8px; border-radius:999px;
+      margin-top:1px;
+    }
+    .portal-form{display:grid; gap:12px}
+    .portal-form label{
+      font-size:12px; font-weight:700; letter-spacing:.2px;
+      color:rgba(255,255,255,.82); margin-bottom:-6px;
+    }
+    .portal-form input{
+      width:100%; padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:#fff; font-size:14px;
+      font-family:inherit;
+    }
+    .portal-form input::placeholder{color:rgba(255,255,255,.42)}
+    .portal-form input:focus{
+      outline:none;
+      border-color:rgba(31,167,163,.6);
+      box-shadow:0 0 0 3px rgba(31,167,163,.18);
+    }
+    .portal-form .btn-primary{width:100%; margin-top:4px}
+    .portal-msg{
+      margin:12px 0 0; font-size:12.5px; line-height:1.45; min-height:1px;
+      text-align:center;
+    }
+    .portal-msg.error{color:#FFB4B4}
+    .portal-msg.ok{color:#9CF3D9}
+    .portal-divider{
+      display:flex; align-items:center; gap:10px;
+      margin:16px 0;
+      color:rgba(255,255,255,.5); font-size:11.5px;
+      text-transform:uppercase; letter-spacing:.5px;
+    }
+    .portal-divider:before,.portal-divider:after{
+      content:""; height:1px; flex:1; background:rgba(255,255,255,.14);
+    }
+    .btn-google{
+      width:100%;
+      background:#fff; color:#1F2937;
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .btn-google:hover{background:#F2F4F7}
+    .portal-foot{
+      margin:16px 0 0; text-align:center;
+      font-size:12px; color:rgba(255,255,255,.7);
+    }
+    .portal-foot a{color:var(--teal-2); font-weight:700}
   </style>
 </head>
 
@@ -563,7 +666,7 @@
             </p>
 
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#contact">Get Started</a>
+              <button class="btn btn-primary" type="button" data-portal>Get Started</button>
               <a class="btn btn-ghost" href="#services">Explore Services</a>
             </div>
 
@@ -628,7 +731,7 @@
             Build and run reliable recruiting workflows — sourcing support, structured interviews,
             and coordination that keeps hiring moving.
           </p>
-          <a class="link" href="#contact">Learn more <span>→</span></a>
+          <a class="link" href="#" data-portal>Learn more <span>→</span></a>
         </article>
 
         <article class="card">
@@ -640,7 +743,7 @@
             Strengthen documentation, compliance practices, and HR administration —
             with audit-ready systems and practical SOPs.
           </p>
-          <a class="link" href="#contact">Learn more <span>→</span></a>
+          <a class="link" href="#" data-portal>Learn more <span>→</span></a>
         </article>
 
         <article class="card">
@@ -652,7 +755,7 @@
             Improve engagement, performance, and retention through clear processes, tools,
             and leader-friendly guidance.
           </p>
-          <a class="link" href="#contact">Learn more <span>→</span></a>
+          <a class="link" href="#" data-portal>Learn more <span>→</span></a>
         </article>
       </div>
 
@@ -725,7 +828,7 @@
             <h3>HR Guides</h3>
           </div>
           <p>Short, actionable guides for managers and operators — built for real-world use.</p>
-          <a class="link" href="#contact">Request access <span>→</span></a>
+          <a class="link" href="#" data-portal>Request access <span>→</span></a>
         </article>
 
         <article class="card">
@@ -734,7 +837,7 @@
             <h3>Templates</h3>
           </div>
           <p>Job descriptions, interview kits, SOPs, and onboarding checklists.</p>
-          <a class="link" href="#contact">Request templates <span>→</span></a>
+          <a class="link" href="#" data-portal>Request templates <span>→</span></a>
         </article>
 
         <article class="card">
@@ -743,7 +846,7 @@
             <h3>Policies & SOPs</h3>
           </div>
           <p>Foundational policy sets and operational documentation to support compliance and scale.</p>
-          <a class="link" href="#contact">Learn more <span>→</span></a>
+          <a class="link" href="#" data-portal>Learn more <span>→</span></a>
         </article>
       </div>
     </div>
@@ -818,9 +921,181 @@
     </div>
   </footer>
 
+  <!-- CLIENT PORTAL MODAL -->
+  <div class="modal-overlay" id="portalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
+      <button class="modal-close" type="button" id="portalClose" aria-label="Close">✕</button>
+
+      <div class="portal-head">
+        <img src="LOGO.png" alt="Vantage Path Consulting" />
+        <div>
+          <h3 id="portalTitle">Client Portal</h3>
+          <p>Sign in to access your HR forms, templates, and resources.</p>
+        </div>
+      </div>
+
+      <div class="coming-soon">
+        <span class="cs-badge">Coming soon</span>
+        <span>Access to our full library of forms &amp; templates is launching soon — offered through client subscriptions (powered by Stripe). Existing clients can sign in below.</span>
+      </div>
+
+      <form class="portal-form" id="loginForm" novalidate>
+        <label for="clientEmail">Client ID / Email</label>
+        <input type="email" id="clientEmail" name="email" placeholder="you@organization.com" autocomplete="username" required />
+
+        <label for="clientPassword">Password</label>
+        <input type="password" id="clientPassword" name="password" placeholder="••••••••" autocomplete="current-password" required />
+
+        <button class="btn btn-primary" type="submit" id="loginBtn">Sign In</button>
+      </form>
+
+      <p class="portal-msg" id="portalMsg" role="status"></p>
+
+      <div class="portal-divider">or</div>
+      <button class="btn btn-google" type="button" id="googleBtn">Continue with Google</button>
+
+      <p class="portal-foot">
+        Need access? <a href="mailto:lucian@vantagepathconsulting.com?subject=Client%20Portal%20Access%20Request">Request an account</a>
+      </p>
+    </div>
+  </div>
+
   <script>
     // Set year
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // --- Client Portal modal open/close ---
+    (function () {
+      const overlay = document.getElementById("portalOverlay");
+      const closeBtn = document.getElementById("portalClose");
+      const msg = document.getElementById("portalMsg");
+      let lastFocused = null;
+
+      function openPortal() {
+        lastFocused = document.activeElement;
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        const email = document.getElementById("clientEmail");
+        if (email) setTimeout(() => email.focus(), 30);
+      }
+      function closePortal() {
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (msg) { msg.textContent = ""; msg.className = "portal-msg"; }
+        if (lastFocused && lastFocused.focus) lastFocused.focus();
+      }
+
+      // Expose so the module script can reuse closePortal after auth
+      window.__portal = { open: openPortal, close: closePortal };
+
+      document.querySelectorAll("[data-portal]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          openPortal();
+        });
+      });
+
+      closeBtn.addEventListener("click", closePortal);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closePortal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && overlay.classList.contains("open")) closePortal();
+      });
+    })();
+  </script>
+
+  <!-- Firebase Auth for the Client Portal -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDR1EjqWQeY4tSE6wb0bEMU611PevIx7yg",
+      authDomain: "vantagepathconsulting.firebaseapp.com",
+      projectId: "vantagepathconsulting",
+      storageBucket: "vantagepathconsulting.firebasestorage.app",
+      messagingSenderId: "875938455177",
+      appId: "1:875938455177:web:8e524cab801327bfcdf058",
+      measurementId: "G-FE380XZ1R5",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Analytics only works over http(s); guard so file:// previews don't error.
+    if (location.protocol === "http:" || location.protocol === "https:") {
+      import("https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js")
+        .then(({ getAnalytics }) => getAnalytics(app))
+        .catch(() => {});
+    }
+
+    const form = document.getElementById("loginForm");
+    const googleBtn = document.getElementById("googleBtn");
+    const loginBtn = document.getElementById("loginBtn");
+    const msg = document.getElementById("portalMsg");
+
+    function setMsg(text, kind) {
+      msg.textContent = text;
+      msg.className = "portal-msg" + (kind ? " " + kind : "");
+    }
+
+    function friendlyError(code) {
+      switch (code) {
+        case "auth/invalid-email": return "That email address looks invalid.";
+        case "auth/user-disabled": return "This account has been disabled.";
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+        case "auth/invalid-credential": return "Incorrect email or password.";
+        case "auth/too-many-requests": return "Too many attempts. Please try again later.";
+        case "auth/popup-closed-by-user": return "Sign-in was cancelled.";
+        case "auth/unauthorized-domain": return "This domain isn't authorized for sign-in yet.";
+        default: return "Sign-in failed. Please try again.";
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("clientEmail").value.trim();
+      const password = document.getElementById("clientPassword").value;
+      if (!email || !password) {
+        setMsg("Please enter your email and password.", "error");
+        return;
+      }
+      loginBtn.disabled = true;
+      setMsg("Signing in…", "");
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+        setMsg(friendlyError(err.code), "error");
+      } finally {
+        loginBtn.disabled = false;
+      }
+    });
+
+    googleBtn.addEventListener("click", async () => {
+      setMsg("Opening Google sign-in…", "");
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (err) {
+        setMsg(friendlyError(err.code), "error");
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = user.displayName || user.email || "there";
+        setMsg("Signed in as " + name + ". The forms & templates library is coming soon.", "ok");
+      }
+    });
   </script>
 </body>
 </html>

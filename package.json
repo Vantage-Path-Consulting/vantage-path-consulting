@@ -1,0 +1,14 @@
+{
+  "name": "vantage-path-consulting",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "scripts": {
+    "dev": "wrangler pages dev ."
+  }
+}

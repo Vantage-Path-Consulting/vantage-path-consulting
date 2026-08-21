@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Never commit service account / credential files
+*firebase-adminsdk*.json
+*serviceAccount*.json
+*.pem
+*.key

@@ -785,17 +785,41 @@
   <div class="portal-overlay" id="portalOverlay" role="dialog" aria-modal="true" aria-labelledby="portalTitle" hidden>
     <div class="portal-modal">
       <button class="portal-close" type="button" aria-label="Close">✕</button>
-      <div class="portal-icon" aria-hidden="true">🔒</div>
-      <h3 id="portalTitle">Client User ID &amp; Login Portal</h3>
-      <p class="portal-badge">Coming soon</p>
-      <p class="portal-copy">
-        Self-service access to forms and templates is on the way. Clients will be able to
-        sign in with a dedicated user ID to request and download resources directly.
-      </p>
-      <p class="portal-note">
-        This will launch alongside a subscription plan (billed via Stripe) for ongoing access.
-      </p>
-      <a class="btn btn-primary" href="mailto:lucian@vantagepathconsulting.com">Contact us in the meantime</a>
+
+      <!-- Signed-out: login / create account form -->
+      <div id="portalLogin">
+        <div class="portal-icon" aria-hidden="true">🔒</div>
+        <h3 id="portalTitle">Client User ID &amp; Login Portal</h3>
+        <p class="portal-copy" id="portalFormCopy" style="margin-bottom:18px">
+          Sign in with your client account to check your access.
+        </p>
+        <form id="portalLoginForm" class="portal-form">
+          <input class="portal-input" type="email" id="portalEmail" placeholder="Email" autocomplete="username" required />
+          <input class="portal-input" type="password" id="portalPassword" placeholder="Password" autocomplete="current-password" minlength="6" required />
+          <p class="portal-error" id="portalLoginError" hidden></p>
+          <button class="btn btn-primary" type="submit" id="portalSubmitBtn" style="width:100%">Sign in</button>
+        </form>
+        <p class="portal-note" style="margin-top:16px">
+          <span id="portalToggleCopy">Don't have an account yet?</span>
+          <button type="button" id="portalToggleMode" class="portal-link-btn">Create one</button>
+        </p>
+      </div>
+
+      <!-- Signed-in: coming soon -->
+      <div id="portalComingSoon" hidden>
+        <div class="portal-icon" aria-hidden="true">🛠</div>
+        <h3>You're signed in</h3>
+        <p class="portal-badge">Forms &amp; templates: coming soon</p>
+        <p class="portal-copy">
+          Self-service access to forms and templates is on the way. You'll be able to
+          request and download resources directly from here.
+        </p>
+        <p class="portal-note">
+          This will launch alongside a subscription plan (billed via Stripe) for ongoing access.
+        </p>
+        <a class="btn btn-primary" href="mailto:lucian@vantagepathconsulting.com">Contact us in the meantime</a>
+        <button class="btn btn-ghost" type="button" id="portalSignOut" style="width:100%; margin-top:10px; color:var(--ink)">Sign out</button>
+      </div>
     </div>
   </div>
 
@@ -842,36 +866,153 @@
     }
     .portal-copy{margin:0 0 10px; color:var(--ink); line-height:1.6; font-size:14.5px}
     .portal-note{margin:0 0 20px; color:var(--muted); line-height:1.6; font-size:13px}
+
+    .portal-form{display:grid; gap:10px; text-align:left}
+    .portal-input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      font-size:14.5px;
+      font-family:inherit;
+      color:var(--ink);
+      background:#fff;
+    }
+    .portal-input:focus{outline:2px solid rgba(31,167,163,.35); outline-offset:1px}
+    .portal-error{
+      margin:0; padding:10px 12px;
+      border-radius:12px;
+      background:rgba(220,38,38,.08);
+      border:1px solid rgba(220,38,38,.18);
+      color:#B91C1C;
+      font-size:13px;
+    }
+    .portal-error[hidden]{display:none}
+    .portal-link-btn{
+      background:none; border:none; padding:0;
+      color:var(--teal); font-weight:700; font-size:13px;
+      cursor:pointer; font-family:inherit;
+    }
+    .portal-link-btn:hover{text-decoration:underline}
   </style>
 
   <script>
     // Set year
     document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 
-    // Client portal "coming soon" modal
-    (function(){
-      var overlay = document.getElementById("portalOverlay");
-      var closeBtn = overlay.querySelector(".portal-close");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-      function openPortal(e){
-        if (e) e.preventDefault();
-        overlay.hidden = false;
+    const firebaseConfig = {
+      apiKey: "AIzaSyDR1EjqWQeY4tSE6wb0bEMU611PevIx7yg",
+      authDomain: "vantagepathconsulting.firebaseapp.com",
+      projectId: "vantagepathconsulting",
+      storageBucket: "vantagepathconsulting.firebasestorage.app",
+      messagingSenderId: "875938455177",
+      appId: "1:875938455177:web:8e524cab801327bfcdf058",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const overlay = document.getElementById("portalOverlay");
+    const closeBtn = overlay.querySelector(".portal-close");
+    const loginView = document.getElementById("portalLogin");
+    const comingSoonView = document.getElementById("portalComingSoon");
+    const loginForm = document.getElementById("portalLoginForm");
+    const loginError = document.getElementById("portalLoginError");
+    const signOutBtn = document.getElementById("portalSignOut");
+    const formCopy = document.getElementById("portalFormCopy");
+    const submitBtn = document.getElementById("portalSubmitBtn");
+    const toggleCopy = document.getElementById("portalToggleCopy");
+    const toggleModeBtn = document.getElementById("portalToggleMode");
+
+    const ERROR_MESSAGES = {
+      "auth/invalid-credential": "Incorrect email or password.",
+      "auth/user-not-found": "No account found with that email.",
+      "auth/wrong-password": "Incorrect password.",
+      "auth/invalid-email": "That email address doesn't look right.",
+      "auth/too-many-requests": "Too many attempts. Try again in a bit.",
+      "auth/email-already-in-use": "An account with that email already exists — try signing in instead.",
+      "auth/weak-password": "Password should be at least 6 characters.",
+      "auth/operation-not-allowed": "Sign-in isn't enabled yet — contact us to get set up.",
+    };
+
+    let mode = "signin"; // "signin" | "create"
+
+    function setMode(next) {
+      mode = next;
+      loginError.hidden = true;
+      if (mode === "create") {
+        formCopy.textContent = "Create a client account to check your access.";
+        submitBtn.textContent = "Create account";
+        toggleCopy.textContent = "Already have an account?";
+        toggleModeBtn.textContent = "Sign in";
+      } else {
+        formCopy.textContent = "Sign in with your client account to check your access.";
+        submitBtn.textContent = "Sign in";
+        toggleCopy.textContent = "Don't have an account yet?";
+        toggleModeBtn.textContent = "Create one";
       }
-      function closePortal(){
-        overlay.hidden = true;
-      }
+    }
 
-      document.querySelectorAll("[data-open-portal]").forEach(function(el){
-        el.addEventListener("click", openPortal);
-      });
-      closeBtn.addEventListener("click", closePortal);
-      overlay.addEventListener("click", function(e){
-        if (e.target === overlay) closePortal();
-      });
-      document.addEventListener("keydown", function(e){
-        if (e.key === "Escape" && !overlay.hidden) closePortal();
-      });
-    })();
+    function openPortal(e) {
+      if (e) e.preventDefault();
+      setMode("signin");
+      overlay.hidden = false;
+    }
+    function closePortal() {
+      overlay.hidden = true;
+    }
+
+    onAuthStateChanged(auth, function (user) {
+      loginView.hidden = !!user;
+      comingSoonView.hidden = !user;
+    });
+
+    document.querySelectorAll("[data-open-portal]").forEach(function (el) {
+      el.addEventListener("click", openPortal);
+    });
+    closeBtn.addEventListener("click", closePortal);
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) closePortal();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !overlay.hidden) closePortal();
+    });
+
+    toggleModeBtn.addEventListener("click", function () {
+      setMode(mode === "signin" ? "create" : "signin");
+    });
+
+    loginForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      loginError.hidden = true;
+      const email = document.getElementById("portalEmail").value;
+      const password = document.getElementById("portalPassword").value;
+      try {
+        if (mode === "create") {
+          await createUserWithEmailAndPassword(auth, email, password);
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+      } catch (err) {
+        loginError.textContent = ERROR_MESSAGES[err.code] || "Something went wrong. Please try again.";
+        loginError.hidden = false;
+      }
+    });
+
+    signOutBtn.addEventListener("click", function () {
+      signOut(auth);
+    });
   </script>
 </body>
 </html>

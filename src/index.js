@@ -1,9 +1,13 @@
-import { bearerToken, verifyFirebaseIdToken } from "../../_lib/firebaseAuth.js";
+import { bearerToken, verifyFirebaseIdToken } from "./lib/firebaseAuth.js";
+
+function handleHealth() {
+  return Response.json({ ok: true });
+}
 
 // Client portal (userid login) is not launched yet — see index.html "coming
 // soon" modal. This placeholder confirms auth works end-to-end without
 // exposing forms/templates yet.
-export async function onRequestGet({ request, env }) {
+async function handlePortalMe(request, env) {
   const token = bearerToken(request);
   if (!token) {
     return Response.json({ error: "Missing bearer token" }, { status: 401 });
@@ -27,3 +31,14 @@ export async function onRequestGet({ request, env }) {
     return Response.json({ error: "Invalid or expired token" }, { status: 401 });
   }
 }
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/health") return handleHealth();
+    if (url.pathname === "/api/portal/me") return handlePortalMe(request, env);
+
+    return env.ASSETS.fetch(request);
+  },
+};
